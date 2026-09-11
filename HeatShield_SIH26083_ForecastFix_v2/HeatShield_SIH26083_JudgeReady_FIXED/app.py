@@ -3,6 +3,8 @@ import inspect
 import re
 import sys
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+IST=ZoneInfo("Asia/Kolkata")
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -163,7 +165,7 @@ def append_alert_log(channels, destination, message, trigger):
     """Store a simulated delivery event in the current browser session only."""
     if "alert_log" not in st.session_state:
         st.session_state["alert_log"] = []
-    timestamp = datetime.now().strftime("%d %b %Y, %I:%M:%S %p")
+    timestamp = datetime.now(IST).strftime("%d %b %Y, %I:%M:%S %p")
     for channel in channels:
         st.session_state["alert_log"].insert(0, {
             "time": timestamp,
@@ -298,7 +300,7 @@ with st.sidebar:
 # -----------------------------
 # Rendered (and resolved) before the weather fetch, since the selected
 # State/City below determines which coordinates get fetched.
-updated = datetime.now().strftime("%I:%M %p • %d %b %Y")
+updated = datetime.now(IST).strftime("%I:%M %p • %d %b %Y") + "IST"
 top_l, top_state, top_city, top_r = st.columns([3.6, 1.25, 1.45, 0.9])
 with top_l:
     # weather_error isn't known yet at this point in the script (the fetch
@@ -331,7 +333,7 @@ weather, weather_error = get_weather(LAT, LON)
 if weather_error is not None:
     topbar_slot.markdown(f'''<div class="topbar"><div class="brand"><div class="brand-fire">🔥</div><div><div class="brand-title">HEATSHIELD</div><div class="brand-sub">{html.escape(LOC_CITY)} Heat Intelligence Platform</div></div></div><div class="top-actions"><span class="live" style="background:#5b6472">● DEMO FALLBACK</span><span class="updated">Last updated: {updated} ↻</span></div></div>''', unsafe_allow_html=True)
 if weather is None:
-    now = datetime.now()
+    now = datetime.now(IST)
     current = {"temperature_2m": 39.5,"relative_humidity_2m": 68.0,"apparent_temperature":42.0,"wind_speed_10m":6.0,"weather_code":1,"shortwave_radiation":850.0}
     hourly = {"time": [f"{now.date()} {h:02d}:00" for h in range(24)], "temperature_2m": [39,39,38,38,37,37,37,38,39,40,41,42,42,41,40,39,38,37,36,36,35,35,35,34], "relative_humidity_2m":[68]*24,"apparent_temperature":[40,40,39,39,38,39,40,41,42,43,44,45,45,44,43,42,40,39,38,37,36,36,35,35],"wind_speed_10m":[6]*24,"shortwave_radiation":[0,0,0,0,0,0,30,150,350,600,800,850,900,850,700,500,250,80,0,0,0,0,0,0]}
     daily = {
