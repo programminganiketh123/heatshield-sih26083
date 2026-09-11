@@ -1,0 +1,8 @@
+streamlit>=1.62,<2
+pandas>=2.2
+numpy>=2.0
+requests>=2.32
+folium>=0.17
+streamlit-folium>=0.23
+fastapi>=0.115
+uvicorn>=0.30
